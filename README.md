@@ -27,6 +27,16 @@ Notes:
   much better, but this is just meant to be a 'toy model' of the
   infrastructure.
 
+Files
+-----
+
+* ``connect_txt.py`` - defines a .txt reader
+
+* ``registry.py`` - main registry module
+
+* ``table.py`` - Table class definition
+
+* ``test.py`` and ``data.txt`` - test files
 
 Example
 -------
