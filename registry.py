@@ -4,6 +4,7 @@
 # track of registered IO classes, as well as defining the base IO classes.
 
 import six
+from collections import OrderedDict
 
 _io_classes = {}
 
@@ -20,10 +21,7 @@ class MetaRegisterBaseIO(type):
         # string-based name of the format, e.g. ``fits`` or ``votable``.
         format_abbreviation = members.get('_format_name')
         if format_abbreviation is None:
-            if cls.__name__ == 'BaseIO':
-                return  # this is to avoid issues with BaseIO
-            else:
-                raise ValueError("_format_name is not defined")
+            return  # don't register base classes
 
         # Each sub-class should also define ``_supported_class`` which is the
         # data class that the IO class supports, e.g. ``Table`` or ``NDData``.
@@ -44,8 +42,7 @@ class BaseIO(object):
     """
     _format_name = None
     _supported_class = None
-    _args = {}
-    _kwargs = {}
+    _read_kwargs = OrderedDict()
 
 
 def read(cls, *args, **kwargs):
@@ -96,7 +93,8 @@ def fix_docstring(func):
         func.__doc__ += "        ----------{0}---\n".format('-' * len(fmt))
 
         cls = _io_classes[(fmt, cl)]
-        for kwarg in cls._kwargs:
-            func.__doc__ += "        {0} : {1}\n            {2}\n".format(kwarg, *cls._kwargs[kwarg])
+        print(cls.__bases__)
+        for kwarg in cls._read_kwargs:
+            func.__doc__ += "        {0} : {1}\n            {2}\n".format(kwarg, *cls._read_kwargs[kwarg])
 
     return func
