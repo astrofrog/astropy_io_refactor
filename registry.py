@@ -69,8 +69,17 @@ def read(cls, *args, **kwargs):
 
 
 READ_TEMPLATE = """
-        The arguments required depend on the format used. The following
-        formats are availale, along with the relevant arguments in each case.
+        Parameters
+        ----------
+        format : str
+            Explicilty specify the format. See the `Notes`_ below for the
+            available formats and options.
+
+        Notes
+        -----
+        In addition to the ``format`` argumnet, the remaining arguments
+        depend on the format used. The following formats are availale, along
+        with the relevant arguments in each case:
 
 """
 
@@ -89,11 +98,10 @@ def fix_docstring(func):
     func.__doc__ += READ_TEMPLATE
 
     for fmt, cl in _io_classes:
-        func.__doc__ += "        ``format='{0}'``\n".format(fmt)
-        func.__doc__ += "        ----------{0}---\n".format('-' * len(fmt))
+        func.__doc__ += "        * ``format='{0}'``\n\n".format(fmt)
 
         cls = _io_classes[(fmt, cl)]
         for kwarg in cls._read_kwargs:
-            func.__doc__ += "        {0} : {1}\n            {2}\n".format(kwarg, *cls._read_kwargs[kwarg])
+            func.__doc__ += "            {0} : {1}\n                 {2}\n".format(kwarg, *cls._read_kwargs[kwarg])
 
     return func
