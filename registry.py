@@ -109,18 +109,27 @@ READ_TEMPLATE = """
 """
 
 
-def fix_docstring(func):
+def fix_docstring(class_name):
     """
     Add information about formats to the read/write method docstrings
     """
 
-    func.__doc__ += READ_TEMPLATE
+    def wrapper(func):
 
-    for fmt, cl in _io_classes:
-        func.__doc__ += "\n        * ``format='{0}'``\n\n".format(fmt)
+        func.__doc__ += READ_TEMPLATE
 
-        cls = _io_classes[(fmt, cl)]
-        for kwarg in cls._read_kwargs:
-            func.__doc__ += "            {0} : {1}\n                 {2}\n".format(kwarg, *cls._read_kwargs[kwarg])
+        for fmt, cl in _io_classes:
 
-    return func
+            io_class = _io_classes[(fmt, cl)]
+
+            if cl == class_name:
+
+                func.__doc__ += "\n        * ``format='{0}'``\n\n".format(fmt)
+
+                for kwarg in io_class._read_kwargs:
+                    func.__doc__ += ("            {0} : {1}\n"
+                                     "                 {2}\n".format(kwarg, *io_class._read_kwargs[kwarg]))
+
+        return func
+
+    return wrapper

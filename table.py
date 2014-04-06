@@ -10,7 +10,7 @@ class Table(object):
         return self.data.__str__()
 
     @classmethod
-    @fix_docstring
+    @fix_docstring('Table')
     @initialize_io_classes
     def read(cls, *args, **kwargs):
         """
