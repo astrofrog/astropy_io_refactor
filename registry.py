@@ -93,7 +93,6 @@ def fix_docstring(func):
         func.__doc__ += "        ----------{0}---\n".format('-' * len(fmt))
 
         cls = _io_classes[(fmt, cl)]
-        print(cls.__bases__)
         for kwarg in cls._read_kwargs:
             func.__doc__ += "        {0} : {1}\n            {2}\n".format(kwarg, *cls._read_kwargs[kwarg])
 
