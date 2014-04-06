@@ -10,16 +10,16 @@ this framework is to:
   actual code.
 * defer importing the classes defining I/O until the last minute.
 
-Issues currently:
+Downsides of the current approach:
 
-* fix_docstring doesn't yet know how to pick only IO classses that explicitly
-  support e.g. read, and also for the specific class requested. We could pass
-  arguments to the decorator, though the class itself cannot be passed (but
-  class name can).
+* We have to refer to the supported class (e.g. ``Table`` or ``NDData``) by name instead of by the class itself - this is needed for two reasons:
 
-* To prevent circular imports, ``_supported_class`` has to be a string, not
-  the data class. We may have to use strings anyway (see other issue above)
-  so this may be something we have to live with.
+    * To prevent circular imports, ``_supported_class`` has to be a string,
+      not the data class.
+
+    * the ``fix_docstring`` decorator can't take the class itself, it has to
+      take the name of the class.
+
 
 Example
 -------
