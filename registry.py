@@ -74,17 +74,17 @@ READ_TEMPLATE = """
 
 """
 
-def initialize_io_classes():
-    # Here we have to hard-code the modules to import to access the IO classes
-    import votable
+def initialize_io_classes(func):
+    # If needed, we initialize the I/O classes
+    if not _io_classes:
+        import votable
+    return func
+
 
 def fix_docstring(func):
     """
     Add information about formats to the read/write method docstrings
     """
-
-    if not _io_classes:
-        initialize_io_classes()
 
     func.__doc__ += READ_TEMPLATE
 
