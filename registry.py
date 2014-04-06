@@ -45,22 +45,39 @@ class BaseIO(object):
     _read_kwargs = OrderedDict()
 
 
+def _get_valid_format(mode, cls, args, kwargs):
+    """
+    Returns the first valid format that can be used to read/write the data in
+    question.  Mode can be either 'read' or 'write'.
+    """
+
+    valid_formats = []
+    for data_format, data_class in _io_classes:
+        io_class = _io_classes[(data_format, data_class)]
+        if hasattr(io_class, mode):
+            if data_class == cls.__name__:
+                if io_class.identify(mode, *args, **kwargs):
+                    valid_formats.append(data_format)
+
+    if len(valid_formats) == 0:
+        raise Exception("No formats matched")
+    elif len(valid_formats) > 1:
+        raise Exception("Too many formats matched")
+
+    return valid_formats[0]
+
+
 def read(cls, *args, **kwargs):
     """
     The read function called by any data read method. Takes care of finding
     the correct reader and passing the appropriate arguments.
     """
 
-    # Here we can try and explicitly extract the path to the file, as well as
-    # obtain a file object, but this is beyond the scope of the example, and
-    # already exists in the current registry.
-    path = fileobj = None
-
     # We now try and identify the format of the file
-    fmt = _get_valid_format('read', cls, path, fileobj, args, kwargs)
+    fmt = _get_valid_format('read', cls, args, kwargs)
 
     # Once we have the format, we can access the readaer
-    reader = _io_classes[(fmt, cls)]
+    reader = _io_classes[(fmt, cls.__name__)].read
 
     # And finally we can read the actual table and return it
     table = reader(*args, **kwargs)
@@ -80,13 +97,12 @@ READ_TEMPLATE = """
         In addition to the ``format`` argumnet, the remaining arguments
         depend on the format used. The following formats are availale, along
         with the relevant arguments in each case:
-
 """
 
 def initialize_io_classes(func):
     # If needed, we initialize the I/O classes
     if not _io_classes:
-        import votable
+        import text_table
     return func
 
 
@@ -98,7 +114,7 @@ def fix_docstring(func):
     func.__doc__ += READ_TEMPLATE
 
     for fmt, cl in _io_classes:
-        func.__doc__ += "        * ``format='{0}'``\n\n".format(fmt)
+        func.__doc__ += "\n        * ``format='{0}'``\n\n".format(fmt)
 
         cls = _io_classes[(fmt, cl)]
         for kwarg in cls._read_kwargs:
