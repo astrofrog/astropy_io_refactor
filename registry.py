@@ -53,15 +53,15 @@ def read(cls, *args, **kwargs):
     The read function called by any data read method. Takes care of finding
     the correct reader and passing the appropriate arguments.
     """
-        
+
     # Here we can try and explicitly extract the path to the file, as well as
     # obtain a file object, but this is beyond the scope of the example, and
     # already exists in the current registry.
     path = fileobj = None
-    
+
     # We now try and identify the format of the file
     fmt = _get_valid_format('read', cls, path, fileobj, args, kwargs)
-    
+
     # Once we have the format, we can access the readaer
     reader = _io_classes[(fmt, cls)]
 
@@ -69,7 +69,7 @@ def read(cls, *args, **kwargs):
     table = reader(*args, **kwargs)
 
     return table
-    
+
 
 READ_TEMPLATE = """
         The arguments required depend on the format used. The following
@@ -80,20 +80,23 @@ READ_TEMPLATE = """
 def initialize_io_classes():
     # Here we have to hard-code the modules to import to access the IO classes
     import votable
-    
+
 def fix_docstring(func):
-    
+    """
+    Add information about formats to the read/write method docstrings
+    """
+
     if not _io_classes:
         initialize_io_classes()
-    
+
     func.__doc__ += READ_TEMPLATE
-    
+
     for fmt, cl in _io_classes:
         func.__doc__ += "        ``format='{0}'``\n".format(fmt)
         func.__doc__ += "        ----------{0}---\n".format('-' * len(fmt))
-        
+
         cls = _io_classes[(fmt, cl)]
         for kwarg in cls._kwargs:
             func.__doc__ += "        {0} : {1}\n            {2}\n".format(kwarg, *cls._kwargs[kwarg])
-        
+
     return func
