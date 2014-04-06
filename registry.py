@@ -8,6 +8,7 @@ from collections import OrderedDict
 
 _io_classes = {}
 
+
 class MetaRegisterBaseIO(type):
     """
     A meta-class that auto-registers IO classes with the registry
@@ -32,7 +33,6 @@ class MetaRegisterBaseIO(type):
         # Finally, we register the IO class, references by the format and the
         # data class (since this is how we will access them later)
         _io_classes[(format_abbreviation, supported_class)] = cls
-
 
 
 @six.add_metaclass(MetaRegisterBaseIO)
@@ -85,6 +85,15 @@ def read(cls, *args, **kwargs):
     return table
 
 
+# DECORATORS
+
+def initialize_io_classes(func):
+    # If needed, we initialize the I/O classes
+    if not _io_classes:
+        import text_table
+    return func
+
+
 READ_TEMPLATE = """
         Parameters
         ----------
@@ -98,12 +107,6 @@ READ_TEMPLATE = """
         depend on the format used. The following formats are availale, along
         with the relevant arguments in each case:
 """
-
-def initialize_io_classes(func):
-    # If needed, we initialize the I/O classes
-    if not _io_classes:
-        import text_table
-    return func
 
 
 def fix_docstring(func):

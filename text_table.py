@@ -3,6 +3,7 @@
 import numpy as np
 from registry import BaseIO
 
+
 class FilenameIO(BaseIO):
     """
     A base class for all IO classes that have ``filename`` as their first
