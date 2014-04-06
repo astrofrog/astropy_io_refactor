@@ -1,4 +1,4 @@
-# FILE FORMAT-SPECIFIC CLASS
+# FILE FORMAT-SPECIFIC CLASS - the equivalent of the current connect.py files
 
 import numpy as np
 from registry import BaseIO

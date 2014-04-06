@@ -90,7 +90,7 @@ def read(cls, *args, **kwargs):
 def initialize_io_classes(func):
     # If needed, we initialize the I/O classes
     if not _io_classes:
-        import text_table
+        import connect_txt
     return func
 
 

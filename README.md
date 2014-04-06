@@ -12,13 +12,20 @@ this framework is to:
 
 Downsides of the current approach:
 
-* We have to refer to the supported class (e.g. ``Table`` or ``NDData``) by name instead of by the class itself - this is needed for two reasons:
+* We have to refer to the supported class (e.g. ``Table`` or ``NDData``) by
+  name instead of by the class itself - this is needed for two reasons:
 
     * To prevent circular imports, ``_supported_class`` has to be a string,
       not the data class.
 
     * the ``fix_docstring`` decorator can't take the class itself, it has to
       take the name of the class.
+
+Notes:
+
+* The code is very hacky - things like text wrap and so on can be dealt with
+  much better, but this is just meant to be a 'toy model' of the
+  infrastructure.
 
 
 Example
